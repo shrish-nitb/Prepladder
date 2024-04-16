@@ -1,0 +1,64 @@
+.Exam_content__KcZoP {
+    height: 100vh;
+    background: #fff
+}
+
+.Exam_answeredMain__ei4UW {
+    background: url('/src/assets/questionsSprite.png') no-repeat -4px -5px;
+    width: 50px;
+    height: 42px
+}
+
+.Exam_answeredStatic__d9Sum {
+    background: url('/src/assets/questionsSprite.png') no-repeat -7px -55px;
+    width: 29px;
+    height: 26px
+}
+
+.Exam_notAnsweredMain__bzf_d {
+    background: url('/src/assets/questionsSprite.png') no-repeat -57px -6px;
+    width: 49px;
+    height: 41px
+}
+
+.Exam_notAnsweredStatic__ktPbw {
+    background: url('/src/assets/questionsSprite.png') no-repeat -42px -56px;
+    width: 29px;
+    height: 26px
+}
+
+.Exam_reviewMain__bY6Xu {
+    background: url('/src/assets/questionsSprite.png') no-repeat -108px -1px;
+    width: 49px;
+    height: 49px
+}
+
+.Exam_reviewStatic__Wnv8q {
+    background: url('/src/assets/questionsSprite.png') no-repeat -75px -54px;
+    width: 28px;
+    height: 28px
+}
+
+.Exam_answeredReviewMain__Le0LQ {
+    background: url('/src/assets/questionsSprite.png') no-repeat -65px -179px;
+    width: 48px;
+    height: 48px
+}
+
+.Exam_answeredReviewStatic__Jpp1S {
+    background: url('/src/assets/questionsSprite.png') no-repeat -9px -87px;
+    width: 29px;
+    height: 29px
+}
+
+.Exam_notVisitMain__fvd9y {
+    background: url('/src/assets/questionsSprite.png') no-repeat -159px -4px;
+    width: 44px;
+    height: 43px
+}
+
+.Exam_notVisitStatic__ayeEd {
+    background: url('/src/assets/questionsSprite.png') no-repeat -108px -56px;
+    width: 29px;
+    height: 29px
+}
