@@ -14,14 +14,15 @@ const Analysis = () => {
   const [report, setReport] = useState();
   const [loading, setLoading] = useState(false);
   const BASE_URL = process.env.REACT_APP_BASE_URL;
-  const { token } = useSelector((state) => state.auth);
+  let { token } = useSelector((state) => state.auth);
   const [correct, setCorrect] = useState(0);
   const [incorrect, setIncorrect] = useState(0);
   const [skipped, setSkipped] = useState(0);
   const [sectionData, setSectionData] = useState([]);
   const [selectOpen, setSelectOpen] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-
+  const [difficulty, setDifficulty] = useState([]);
+  const [currentDifficultySection, setCurrentDifficultySection] = useState(0);
   const location = useLocation();
 
   // Extract state from location object
@@ -50,7 +51,52 @@ const Analysis = () => {
         };
         const res = await axios.request(config);
         setReport(res.data);
-
+        // console.log(res.data);
+        const transformedSections = res?.data?.sections.map((section) => {
+          const easyQuestions = [];
+          const mediumQuestions = [];
+          const hardQuestions = [];
+    
+          section.questions.forEach((question, index) => {
+            const status =
+              question?.status === 1
+                ? question?.marked == question?.answer ? "correct" : "incorrect"
+                : "unattempted"
+    
+            switch (question?._id?.meta?.tag) {
+              case "EASY":
+                easyQuestions.push({
+                  questionNumber: (index + 1).toString(),
+                  status: status,
+                });
+                break;
+              case "MEDIUM":
+                mediumQuestions.push({
+                  questionNumber: (index + 1).toString(),
+                  status: status,
+                });
+                break;
+              case "HARD":
+                hardQuestions.push({
+                  questionNumber: (index + 1).toString(),
+                  status: status,
+                });
+                break;
+              default:
+                break;
+            }
+          });
+    
+          return {
+            name: section.name,
+            easy: easyQuestions,
+            medium: mediumQuestions,
+            hard: hardQuestions,
+          };
+        });
+    
+        // console.log(transformedSections);
+        setDifficulty(transformedSections)
         let markedAsAnswerCount = 0;
         let notMarkedAsAnswerCount = 0;
         let skippedQuestions = 0;
@@ -65,28 +111,28 @@ const Analysis = () => {
           // Loop through questions in the section
           section.questions.forEach((question) => {
             // Check if question is marked as answer
-            if (question.marked == question.answer) {
+            if (question?.marked == question?.answer) {
               markedAsAnswerCount++;
               correctCount++;
             } else if (
-              question.marked != "" &&
-              question.marked != question.answer
+              question?.marked != "" &&
+              question?.marked != question?.answer
             ) {
               // Check if question is marked but not as the answer
               notMarkedAsAnswerCount++;
               incorrectCount++;
             }
             if (
-              question.status === 3 ||
-              question.status === 4 ||
-              question.status === 0
+              question?.status === 3 ||
+              question?.status === 4 ||
+              question?.status === 0
             ) {
               skippedQuestions++;
               missedCount++;
             }
           });
 
-          sectionCounts[section.name] = {
+          sectionCounts[section?.name] = {
             correct: correctCount,
             incorrect: incorrectCount,
             missed: missedCount,
@@ -117,7 +163,7 @@ const Analysis = () => {
   };
 
   return (
-    <div className="w-screen h-full mx-auto relative bg-[#181818] flex flex-col items-center min-h-screen">
+    <div className="w-screen h-full mx-auto relative bg-[#181818] flex flex-col items-center min-h-screen mb-10">
       {loading ? (
         <Loader />
       ) : (
@@ -203,6 +249,9 @@ const Analysis = () => {
               incorrect={incorrect}
               skipped={skipped}
               sectionData={sectionData}
+              difficulty={difficulty}
+              currentDifficultySection={currentDifficultySection}
+              setCurrentDifficultySection={setCurrentDifficultySection}
             />
           ) : (
             <MockAnalysis

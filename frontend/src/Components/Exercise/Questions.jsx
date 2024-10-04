@@ -17,15 +17,14 @@ import refreshTokenIfExpired from "../../utils/refreshTokenIfExpired ";
 //     "correct":2
 // }
 
-const Questions = ({ data }) => {
+const Questions = ({ data,algoId ,submitted,setSubmitted}) => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   const [markedValue, setMarkedValue] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
   const [statement, setStatement] = useState([]);
   const [response, setResponse] = useState();
   const [loading, setLoading] = useState(false);
-  const { token } = useSelector((state) => state.auth);
+  let { token } = useSelector((state) => state.auth);
   const dispatch= useDispatch()
   useEffect(() => {
     setMarkedValue(null);
@@ -62,21 +61,24 @@ const Questions = ({ data }) => {
 
   const submitHandler = async () => {
     setLoading(true);
-    await refreshTokenIfExpired(dispatch)
+    const refreshToken = await refreshTokenIfExpired(dispatch);
+      if(refreshToken) token = refreshToken;
+      const algoData={...data, algo:algoId};
+      console.log(algoData);
     let config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `${BASE_URL}/question/solve/${data?._id}/${markedValue}`,
+      url: `${BASE_URL}/question/solve/${algoData?._id}/${markedValue}`,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      data: data,
+      data: algoData,
     };
     await axios
       .request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
+        console.log(response.data);
         setResponse(response?.data);
       })
       .catch((error) => {
@@ -85,6 +87,9 @@ const Questions = ({ data }) => {
     setLoading(false);
   };
 
+  useEffect(()=>{
+      if(submitted) submitHandler();
+  },[submitted])
   return (
     <>
       {loading ? (
@@ -184,27 +189,24 @@ const Questions = ({ data }) => {
               )}
             </>
           )}
-          {!submitted ? (
-            <div
-              className="flex items-center justify-center text-white duration-300 transition-all"
-              onClick={() => {
-                setSubmitted(true);
-              }}
-            >
-              <button
-                className="bg-black py-2 px-5 rounded-lg font-semibold w-fit text-xl "
-                onClick={() => submitHandler()}
-              >
-                Submit
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center text-black duration-300 transition-all ">
-              <button className="border-2 py-2 px-5 rounded-lg font-semibold w-fit cursor-not-allowed select-none text-xl">
-                Submit
-              </button>
-            </div>
-          )}
+         
+
+          {
+            submitted &&  <div className="flex flex-col gap-x-3 w-full">
+            <p className=""> Solution:</p>
+            {response?.solution.startsWith(
+              "http"
+            ) ? (
+              <img
+                src={response?.solution}
+                alt="Solution"
+                className=""
+              />
+            ) : (
+              <p>{response?.solution}</p>
+            )}
+          </div>
+          }
           {/* <button className='w-fit text-start border-2 py-2 px-3 rounded-lg'>{`A. One verge of getting solved`}</button>
         <button  className='w-fit text-start border-2 py-2 px-3 rounded-lg'>{`B. Nothing getting solved soon`}</button>
         <button  className='w-fit text-start border-2 py-2 px-3 rounded-lg'>{`C. Will get solved + will give crazy returns`}</button>

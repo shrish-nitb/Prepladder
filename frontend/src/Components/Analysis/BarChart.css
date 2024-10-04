@@ -1,27 +1,26 @@
 .chart {
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-  }
-  
-  .bar {
-    flex: 1;
-    margin: 0 5px;
-    position: relative;
-    transition: background-color 0.3s ease;
-  }
-  
-  .tooltip {
-    position: absolute;
-    width: 100%;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #575656;
-    color: #fff;
-    padding: 5px;
-    border-radius: 5px;
-    opacity: 0.9;
-    pointer-events: none;
-  }
-  
+  width: 100%;
+  height: 150px;
+  padding: 10px;
+}
+
+.bar {
+  flex: 1;
+  margin: 0 5px;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.tooltip {
+  position: absolute;
+  width: 100%;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #575656;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  opacity: 0.9;
+  pointer-events: none;
+}

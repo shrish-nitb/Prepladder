@@ -7,6 +7,7 @@ import {
 import { Link, useLocation, useParams } from "react-router-dom";
 import Loader from "../Loader";
 import axios from "axios";
+import { FaInfinity } from "react-icons/fa6";
 
 const ExercisePage = () => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -17,9 +18,12 @@ const ExercisePage = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [numberOfQuestions, setNumberOfQuestions] = useState(0);
   const location = useLocation();
+  const [counter, setCounter] = useState(1);
+  const [submitted, setSubmitted] = useState(false);
 
   // Extract state from location object
   const topic = location.state?.topic;
+  const algoId= location.state?.id
   // console.log(location);
   // const [index,setIndex] = useState(0)
   useEffect(() => {
@@ -31,6 +35,8 @@ const ExercisePage = () => {
       try {
         let data = JSON.stringify({
           topic: `${topic}`,
+          algo:algoId
+          
         });
         setLoading(true);
         const config = {
@@ -71,9 +77,10 @@ const ExercisePage = () => {
             >
               <div className="w-full flex justify-between items-end h-[40px]">
                 <p className="text-pure-greys-25 select-none">.</p>
-                <p className="text-black font-semibold">{`Questions ${
-                  currentQuestion + 1
-                } of ${numberOfQuestions}`}</p>
+                <div className="text-black font-semibold flex items-center gap-x-3">
+                  {`Question ${counter} of`}
+                  <FaInfinity />
+                </div>
                 <Link
                   to={"/exercise"}
                   className="bg-black py-2 px-5 rounded-lg font-semibold"
@@ -81,17 +88,45 @@ const ExercisePage = () => {
                   COMPLETE
                 </Link>
               </div>
-              <Questions data={exerciseData[currentQuestion]} />
+              <Questions data={exerciseData[currentQuestion]} algoId={algoId} submitted={submitted} setSubmitted={setSubmitted}/>
+              <div className="flex items-center justify-center gap-x-5 text-2xl font-bold">
+              {!submitted ? (
+            <div
+              className="flex items-center justify-center text-white duration-300 transition-all"
+              onClick={() => {
+                setSubmitted(true);
+              }}
+            >
+              <button
+                className="bg-black py-2 px-5 rounded-lg font-semibold w-fit text-xl "
+                onClick={() => setSubmitted(true)}
+              >
+                Submit
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center text-black duration-300 transition-all ">
+              <button className="border-2 py-2 px-5 rounded-lg font-semibold w-fit cursor-not-allowed select-none text-xl">
+                Submit
+              </button>
+            </div>
 
+          )}
+              </div>
               <div className="flex items-center justify-center gap-x-5 text-2xl font-bold ">
                 <button
-                  className="bg-black p-3 font-semibold rounded-full h-full aspect-square"
+                  className={`bg-black p-3 font-semibold rounded-full h-full aspect-square ${
+                    currentQuestion === 0 && counter === 1 ? "hidden" : "block"
+                  }`}
                   onClick={() => {
                     if (currentQuestion === 0) {
                       setCurrentQuestion(numberOfQuestions - 1); // Reset currentQuestion to 0 if last currentQuestion is reached
                     } else {
                       setCurrentQuestion(currentQuestion - 1); // Increment currentQuestion otherwise
                     }
+                    if (counter <= 1) {
+                      setCounter(1);
+                    } else setCounter(counter - 1);
                   }}
                 >
                   <MdOutlineKeyboardArrowLeft />
@@ -104,6 +139,7 @@ const ExercisePage = () => {
                     } else {
                       setCurrentQuestion(currentQuestion + 1); // Increment currentQuestion otherwise
                     }
+                    setCounter(counter + 1);
                   }}
                 >
                   <MdOutlineKeyboardArrowRight />

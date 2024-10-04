@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const RadialChart = ({ subscribed, taken }) => {
+const RadialChart = ({ subscribed, taken, title }) => {
   const canvasRef = useRef(null);
   const [hovered, setHovered] = useState(false);
   const [percentageCompleted, setPercentageCompleted] = useState(0);
@@ -28,28 +28,28 @@ const RadialChart = ({ subscribed, taken }) => {
     // Draw subscribed arc
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, startAngle, endAngleSubscribed);
-    ctx.strokeStyle = "#8884d8";
-    ctx.lineWidth = 20;
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 10;
     ctx.stroke();
 
     // Draw taken arc
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, startAngle, endAngleTaken);
     ctx.strokeStyle = "#82ca9d";
-    ctx.lineWidth = 20;
+    ctx.lineWidth = 10;
     ctx.stroke();
 
     if (!hovered) {
       const takenText = `${taken}`;
-      const solvedText = `solved`;
+      const solvedText = `${title}`;
       const takenTextWidth = ctx.measureText(takenText).width;
       const solvedTextWidth = ctx.measureText(solvedText).width;
-      ctx.font = "20px Arial";
+      ctx.font = "15px Arial";
       ctx.fillStyle = "#fff";
-      ctx.fillText(takenText, centerX - takenTextWidth / 2, centerY + 5); // Display taken value centered horizontally
-      ctx.fillText(solvedText, centerX - solvedTextWidth / 2, centerY + 30); // Display "solved" centered below taken
+      ctx.fillText(takenText, centerX - takenTextWidth / 2, centerY ); // Display taken value centered horizontally
+      ctx.fillText(solvedText, centerX - solvedTextWidth / 2, centerY + 15); // Display "solved" centered below taken
     } else {
-      ctx.font = "20px Arial";
+      ctx.font = "15px Arial";
       ctx.fillStyle = "#fff";
       ctx.fillText(
         `${percentageCompleted.toFixed(2)}%`,
@@ -62,8 +62,8 @@ const RadialChart = ({ subscribed, taken }) => {
   return (
     <canvas
       ref={canvasRef}
-      width={200}
-      height={200}
+      width={150}
+      height={150}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     ></canvas>

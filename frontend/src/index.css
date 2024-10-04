@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Kreon:wght@400;700&display=swap');
 
 body {
   margin: 0;
@@ -32,20 +33,24 @@ code {
   padding-top: 1px;
   padding-bottom: 64px;
   background-repeat: no-repeat;
+  background-color: #000000;
 }
 
 @media (min-width: 1024px) {
 
   /* Styles for large displays (lg) */
   .loginBg {
-    background-image: url("/src/assets/loginbg2.webp");
+    background-image: url("/src/assets/SL_0210121_40570_75.jpg");
     background-size: cover;
     height: 100vh;
     width: 100vw;
   }
 }
 
-
+.bgblackgrad{
+  background: rgb(255,255,255);
+background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(193,193,193,1) 0%, rgba(135,129,129,1) 4%, rgba(117,114,114,1) 14%, rgba(90,87,87,1) 22%, rgba(72,71,71,1) 33%, rgba(0,0,0,1) 100%);
+}
 .activeMock {
   background-image: url("/src/assets/Active.png");
   background-size: cover;
@@ -122,4 +127,59 @@ code {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
   /* WebKit */
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+.pdf-viewer-container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.pdf-controls button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pdf-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pdf-document {
+  display: flex;
+  justify-content: center;
+}
+
+.react-pdf__Page__textContent {
+  display: none; /* Hide text layers */
+}
+.react-pdf__Page__annotations{
+  display: none;
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const MockAnalysis = ({ data, currentQuestion, setCurrentQuestion }) => {
   // const [currentQuestion, setCurrentQuestion] = useState(0);
-  console.log(data);
+  // console.log(data);
   const [statement, setStatement] = useState([]);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const MockAnalysis = ({ data, currentQuestion, setCurrentQuestion }) => {
       {data === undefined ? (
         <div className="w-full bg-[#333238] rounded-2xl h-full p-5 gap-5 flex flex-col items-start text-center ">
           Something went wrong. Please try again later.
-          </div>
+        </div>
       ) : (
         <div className="w-full bg-[#333238] rounded-2xl h-full p-5 gap-5 flex flex-col items-start">
           {/* meta tag bar */}
@@ -55,13 +55,13 @@ const MockAnalysis = ({ data, currentQuestion, setCurrentQuestion }) => {
                     "MEDIUM"
                   ? "bg-[#FEF3C7]"
                   : "bg-[#FECACA]"
-              }  rounded-2xl px-2 text-black font-semibold uppercase`}
-            >{`${data?.questions[currentQuestion]?._id?.meta?.tag}`}</p>
-            <p className="bg-[#DBEAFE] rounded-2xl px-3 text-[#2563EB] font-semibold ">{`${data?.questions[currentQuestion]?._id?.meta?.subtopic}`}</p>
+              }  rounded-2xl px-2 text-black font-semibold capitalize`}
+            >{`${data?.questions[currentQuestion]?._id?.meta?.tag.toLowerCase()}`}</p>
+            <p className="bg-[#DBEAFE] rounded-2xl px-3 text-[#2563EB] font-semibold capitalize">{`${data?.questions[currentQuestion]?._id?.meta?.subtopic}`}</p>
           </div>
-          <div className="w-full flex gap-5 ">
+          <div className="w-full flex lg:flex-row flex-col-reverse gap-5 ">
             {/* left section */}
-            <div className="w-4/5  flex flex-col gap-y-5 text-lg">
+            <div className="lg:w-4/5 w-full  flex flex-col gap-y-5 text-lg">
               <div className="border border-richblack-100 rounded-xl p-3 flex flex-col gap-y-3">
                 <p>
                   <b>Directions : </b>{" "}
@@ -150,7 +150,7 @@ const MockAnalysis = ({ data, currentQuestion, setCurrentQuestion }) => {
               </div>
             </div>
             {/* right section */}
-            <div className="w-1/5 grid grid-cols-4 mx-auto gap-3 h-fit">
+            <div className="lg:w-1/5 w-full grid grid-cols-4 mx-auto gap-3 h-fit">
               {data?.questions.map((question, index) => {
                 return (
                   <button

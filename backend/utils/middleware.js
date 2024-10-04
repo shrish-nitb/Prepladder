@@ -13,7 +13,7 @@ async function firebaseTokenVerifier(req, res, next) {
             token = req.body.token;
         }
         decodedToken = await verifyToken(token);
-        req.decodedToken = decodedToken; 
+        req.decodedToken = decodedToken;
         req.decodedToken.phone = req.body.phone;
         next();
     } catch (error) {
@@ -30,6 +30,19 @@ async function userAuthLookup(req, res, next) {
         next();
     } catch (error) {
         res.status(401).json({ message: `Unauthorized, ${error}` });
+    }
+}
+
+function roleAuthProvider(role) {
+    return async function (req, res, next) {
+        try {
+            if (req.user.role != role) {
+                throw new Error("Insufficient Privilage.")
+            }
+            next();
+        } catch (error) {
+            res.status(401).json({ message: `Unauthorized, ${error}` });
+        }
     }
 }
 
@@ -56,6 +69,23 @@ function authorizationProvider(service) {
                 if (!purchased) {
                     throw new Error("Out of Plan");
                 }
+            } else if (service == 'PRACTICE') {
+                let purchased = false;
+                const { algo } = req.body;
+                const plans = req.user.plans;
+                for (let i = 0; i < plans.length; i++) {
+                    const planObj = plans[i];
+                    let currentTime = (new Date()).getTime();
+                    let expiryDate = (new Date(planObj.expiryDate)).getTime();
+                    let isExpired = currentTime > expiryDate;
+                    if (planObj.plan.algo.includes(algo) && !isExpired) {
+                        purchased = true;
+                        break;
+                    }
+                }
+                if (!purchased) {
+                    throw new Error("Out of Plan");
+                }
             } else if (service == 'REPORT') {
                 const reportID = req.params.report || req.body.report;
                 if (!reportID) {
@@ -65,24 +95,7 @@ function authorizationProvider(service) {
                 if (req.decodedToken.uid != owner.user) {
                     throw new Error("Insufficient rights");
                 }
-            } else if (service == 'PRACTICE') {
-                let purchased = false;
-                const plans = req.user.plans;
-                for (let i = 0; i < plans.length; i++) {
-                    const planObj = plans[i];
-                    let currentTime = (new Date()).getTime();
-                    let expiryDate = (new Date(planObj.expiryDate)).getTime();
-                    let isExpired = currentTime > expiryDate;
-                    if (planObj.plan.practice && !isExpired) {
-                        purchased = true;
-                        break;
-                    }
-                }
-                if (!purchased) {
-                    throw new Error("Out of Plan");
-                }
-            }
-
+            } 
             next();
         } catch (error) {
             res.status(401).json({ message: `Unauthorized, ${error}` });
@@ -90,4 +103,4 @@ function authorizationProvider(service) {
     }
 }
 
-module.exports = { firebaseTokenVerifier, userAuthLookup, authorizationProvider }
+module.exports = { firebaseTokenVerifier, userAuthLookup, authorizationProvider, roleAuthProvider }

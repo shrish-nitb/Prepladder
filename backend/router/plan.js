@@ -5,37 +5,25 @@ const Plan = require('../model/plan');
 //GET : retrieve all plans
 router.get('/', async (req, res) => {
   try {
-    //use listPlans db utils here
-    const plans = await Plan.find().populate('test', '-sections.questions -sections._id');
+    const plans = await Plan.find({}, "-__v").populate([
+      {
+        path: "test",
+        select: "-sections.questions -sections._id -__v"
+      },
+      {
+        path: "algo",
+        select: "-__v",
+        populate: {
+          path: "topics",
+          select: "-__v"
+        }
+      }
+    ])
     res.status(200).json(plans);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
-// POST create a new plan
-// router.post('/', async (req, res) => {
-//     try {
-//       const { name, description, price, validity, test, practice, media } = req.body;
-  
-//       const newPlan = new Plan({
-//         name,
-//         description,
-//         price,
-//         validity,
-//         test,
-//         practice,
-//         media,
-//       });
-  
-//       const savedPlan = await newPlan.save();
-      
-//       res.status(201).json(savedPlan);
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: 'Internal Server Error' });
-//     }
-//   });
 
 module.exports = router;

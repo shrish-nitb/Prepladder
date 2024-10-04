@@ -5,7 +5,8 @@ import MyProfile from "../Components/Dashboard/MyProfile";
 import Loader from "../Components/Loader";
 
 const Dashboard = () => {
-  const { token, loading } = useSelector((state) => state.auth);
+  const {  loading } = useSelector((state) => state.auth);
+  let token = window.localStorage.getItem('token')
 
   // console.log(user)
   const navigate = useNavigate();

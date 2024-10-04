@@ -1,0 +1,59 @@
+.stacked-bar-chart {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 20rem;
+  padding: 10px;
+  gap: 3rem;
+}
+
+.bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.bar-label {
+  margin-bottom: 5px;
+  width: 5rem;
+}
+
+.bar-segment {
+  width: 100%;
+  text-align: center;
+  transition: height 0.5s ease; /* Adjust transition duration and easing */
+  overflow: hidden; /* Ensures smooth animation */
+}
+
+.bar-segment span {
+  color: white;
+  font-size: 12px; /* Adjust font size */
+  margin-top: 2px;
+}
+
+/* Hover effect */
+/* .bar-segment:hover {
+    transform: translateY(-3px); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  }
+  .segment-value {
+    color: white;
+    font-size: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0; 
+    pointer-events: none; 
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 4px;
+    border-radius: 4px;
+    transition: opacity 0.3s ease;
+  }
+  
+  .bar-segment:hover .segment-value {
+    opacity: 1; 
+  }
+
+   */

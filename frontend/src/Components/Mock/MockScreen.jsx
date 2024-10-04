@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Questions from "./Questions";
 import userImage from "../../assets/candidateImg.webp";
 import "./mock.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import Calculator from "../Calculator/Calculator";
@@ -11,7 +11,7 @@ import refreshTokenIfExpired from "../../utils/refreshTokenIfExpired ";
 
 const MockScreen = () => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
-  const { token } = useSelector((state) => state.auth);
+  let { token } = useSelector((state) => state.auth);
   const dispatch= useDispatch();
   const user = JSON.parse(localStorage.getItem("user"));
   const [data, setData] = useState(JSON.parse(localStorage.getItem("data"))); // State to hold data
@@ -40,9 +40,9 @@ const MockScreen = () => {
   });
   const [submitClicked, setSubmitClicked] = useState(false);
   const [calculatorOpen, setCalculatorOpen] = useState(false);
-
+  const location = useLocation()
   const navigate = useNavigate();
-
+  const origin= location?.state ? location.state.origin : null;
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Check if the pressed key is F5 (keyCode 116) or the Refresh key (keyCode 82) and prevent the default action
@@ -170,7 +170,8 @@ const MockScreen = () => {
   };
   // end old start new
   const helper = async () => {
-    await refreshTokenIfExpired(dispatch);
+    const refreshToken = await refreshTokenIfExpired(dispatch);
+      if(refreshToken) token = refreshToken;;
     const newData = { ...data };
     // console.log(newData);
     newData.sections[currentSection]?.questions.forEach((question) => {
@@ -213,7 +214,8 @@ const MockScreen = () => {
   };
 
   const helper2 = async () => {
-    await refreshTokenIfExpired(dispatch);
+    const refreshToken = await refreshTokenIfExpired(dispatch);
+      if(refreshToken) token = refreshToken;
     const newData = { ...data };
     newData.sections[currentSection]?.questions.forEach((question) => {
       question._id = question._id._id;
@@ -273,7 +275,8 @@ const MockScreen = () => {
       localStorage.removeItem("data");
       localStorage.removeItem("currentSection");
       // console.log(data);
-      navigate("/dashboard/my-profile");
+      if(origin) navigate(origin);
+      else navigate("/mocks");
       // window.location.reload(false);
     } catch (error) {
       console.error("Error removing item from localStorage:", error);
@@ -462,7 +465,11 @@ const MockScreen = () => {
                           ? "Exam_reviewMain__bY6Xu"
                           : "Exam_notAnsweredMain__bzf_d"
                       }`}
-                      onClick={() => setCurrentQuestion(i)}
+                      onClick={async() => {
+                         const refreshToken = await refreshTokenIfExpired(dispatch);
+      if(refreshToken) token = refreshToken;
+                        setCurrentQuestion(i)
+                      }}
                     >
                       {i + 1}
                     </button>
@@ -478,7 +485,7 @@ const MockScreen = () => {
                 onClick={() => {
                   setSubmitClicked(true);
                 }}
-                disabled={currentSection === 0}
+                // disabled={currentSection === 0}
               >
                 Submit
               </button>

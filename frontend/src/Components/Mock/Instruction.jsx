@@ -15,7 +15,7 @@ const Instruction = () => {
   const [loading, setLoading] = useState(true);
   const startTime = localStorage.getItem("testStartTime");
   const { id } = useParams();
-  const token = localStorage.getItem("token");
+  let token = localStorage.getItem("token");
   const [isDisabled, setIsDisabled] = useState(false);
   const dispatch= useDispatch()
   useEffect(() => {
@@ -30,7 +30,8 @@ const Instruction = () => {
 
   const clickHandler = async () => {
     const toastId = toast.loading("Loading...");
-    await refreshTokenIfExpired(dispatch)
+    const refreshToken = await refreshTokenIfExpired(dispatch);
+      if(refreshToken) token = refreshToken;
     setIsDisabled(true);
     let data = JSON.stringify({
       test: `${id}`,
@@ -45,14 +46,14 @@ const Instruction = () => {
       },
       data: data,
     };
-
+    
     axios
       .request(config)
       .then((response) => {
         // console.log(JSON.stringify(response.data));
         localStorage.setItem("data", JSON.stringify(response?.data));
         localStorage.setItem("currentSection", 0);
-
+        
         if (response?.data?.message === "Test Already Attempted") {
           toast.error("Test Already Attempted");
         }

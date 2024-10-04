@@ -3,7 +3,7 @@ import { BsFillArrowRightCircleFill } from "react-icons/bs";
 import { FaPen, FaSave } from "react-icons/fa";
 import RadialChart from "./RadialChart";
 import { IoLockOpen } from "react-icons/io5";
-import { Link, json } from "react-router-dom";
+import { Link, json, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { BuyModal } from "../BuyModal";
@@ -18,13 +18,23 @@ const MyProfile = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [bio, setBio] = useState("");
   const [loading, setLoading] = useState(true);
-  const { token } = useSelector((state) => state.auth);
+  let { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch()
+  const lastRefreshedToken = localStorage.getItem('lastRefreshed');
+  const currentTime = Date.now();
+  const navigate= useNavigate();
   useEffect(() => {
+    if ( (currentTime - lastRefreshedToken > 120 * 60 * 1000)) {
+      localStorage.setItem("lastRefreshed", currentTime);
+       refreshTokenIfExpired(dispatch);
+      navigate('/');
+      return;
+    }
     const fetchDetails = async () => {
       try {
         setLoading(true);
-        await refreshTokenIfExpired(dispatch)
+        const refreshToken = await refreshTokenIfExpired(dispatch);
+      if(refreshToken) token = refreshToken;
         const data = await axios.get(`${BASE_URL}/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -37,7 +47,12 @@ const MyProfile = () => {
       }
       setLoading(false);
     };
-    fetchDetails();
+    refreshTokenIfExpired(dispatch).then((newToken) => {
+      if (newToken) {
+        token = newToken;
+      }
+      fetchDetails();
+    });
   }, []);
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -64,7 +79,7 @@ const MyProfile = () => {
       {loading ? (
         <Loader />
       ) : (
-        <div className="w-full h-full min-h-screen mx-auto relative bg-[#181818] overflow-visible text-white">
+        <div className="w-full h-full min-h-screen mx-auto relative bg-[#181818] overflow-visible text-white flex flex-col items-center justify-between ">
           <div className="w-10/12 h-full flex flex-col items-center justify-center mx-auto py-20 lg:py-10 gap-y-10">
             {/* Unlock the Full Experience section */}
             {user?.plans.length === 0 && (
@@ -139,7 +154,7 @@ const MyProfile = () => {
                   )}
                 </div> */}
               </div>
-              <button
+              {/* <button
                 className="absolute top-2 hidden   right-3 bg-[#bdf9a2] md:flex items-center justify-center gap-x-3 text-black font-semibold py-2 px-3 rounded-xl"
                 onClick={editOpen ? handleSaveProfile : handleEditToggle}
               >
@@ -170,7 +185,7 @@ const MyProfile = () => {
                     Edit Profile
                   </>
                 )}
-              </button>
+              </button> */}
             </div>
             <div className="flex flex-col lg:flex-row w-full gap-x-10 gap-y-10 h-full">
               <div className="lg:w-1/3 w-full  py-5 bg-[#333238] rounded-2xl flex items-center  justify-center px-5">
@@ -202,7 +217,21 @@ const MyProfile = () => {
                   IIM📚🎓
                 </p>
               </div>
+              
             </div>
+            
+          </div>
+          <div className="w-10/12 bg-[#333238] py-2 flex items-center justify-end gap-x-6  px-5 rounded-lg">
+            <Link  to={"https://www.projectascend.in/refunds"} className="hover:text-[#bdf9a2]">
+              <p>Refund Policy</p>
+            </Link>
+            <Link  to={"https://www.projectascend.in/privacy-policy"} className="hover:text-[#bdf9a2]">
+             <p> Privacy Policy</p>
+            </Link>
+            <Link  to={"https://www.projectascend.in/terms"} className="hover:text-[#bdf9a2]">
+             <p> Terms & Condition</p>
+            </Link>
+            <p>DIODE</p>
           </div>
           {buyModalOpen && <BuyModal setBuyModalOpen={setBuyModalOpen} />}
         </div>

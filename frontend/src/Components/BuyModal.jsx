@@ -14,18 +14,18 @@ function openInNewTab(url) {
   document.body.removeChild(a);
 }
 
-export const BuyModal = ({ setBuyModalOpen }) => {
+export const BuyModal = ({ setBuyModalOpen, plan }) => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [isDisabled, setIsDisabled] = useState(false);
 
   const navigate = useNavigate();
-  const { token } = useSelector((state) => state.auth);
+  let { token } = useSelector((state) => state.auth);
   const submitHandler = async () => {
     const toastId = toast.loading("Loading...");
     setIsDisabled(true);
     try {
       const data = await axios.get(
-        `${BASE_URL}/orders/65f5d06d896356522d087e8b`,
+        `${BASE_URL}/orders/${plan?._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -66,9 +66,9 @@ export const BuyModal = ({ setBuyModalOpen }) => {
         </button>
         <div className="flex items-center gap-x-6">
           {/* <IoLockOpen className='text-4xl text-pure-greys-100'/> */}
-          <p className="text-3xl font-bold text-pure-greys-100">
-            Crack IPMAT 2024 Now!!
-          </p>
+          {/* <p className="text-3xl font-bold text-pure-greys-100">
+            Crack IPMAT 2025 Now!!
+          </p> */}
         </div>
 
         <div className="flex w-[700px]    justify-center items-center gap-y-3 ">
@@ -98,12 +98,20 @@ export const BuyModal = ({ setBuyModalOpen }) => {
                     </div> */}
           <div class="bg-white rounded-xl w-full  shadow-lg py-5 px-8 mx-7">
             <p class="text-[28px] font-extrabold border-b-2 border-b-grey-500 pb-2 ">
-              Plan Professor 🚀
+             {` ${plan?.name} 🚀`}
             </p>
             <p class="font-semibold mt-3 text-lg">
-              🌟 Crack IPMAT with Our Plan Professor! 🌟
+              {`🌟 ${plan?.description} 🌟`}
             </p>
-            <p class=" text-gray-500 ">
+            {
+              plan?.features.map((feature, i) => (
+                <p key={i} className="text-gray-500 flex items-center gap-x-2">
+                  {` - `}
+                  <span dangerouslySetInnerHTML={{ __html: feature }} />
+                </p>
+              ))
+            }
+            {/* <p class=" text-gray-500 ">
               - A carefully designed <b>SYSTEMATIC PLAN</b> to streamline your
               study approach.
             </p>
@@ -120,25 +128,25 @@ export const BuyModal = ({ setBuyModalOpen }) => {
             <p class="text-gray-500 ">
               - <b>20 PRACTICE SHEETS</b> to elevate your learning curve.
             </p>
-            <p class="text-gray-500 ">
+            <p* class="text-gray-500 ">
               - <b>UNLIMITED</b> topic-wise exercise algorithms for continuous
               practice.
-            </p>
-            <b>But wait, there's more!</b>
+            </p*/}
+            {/* <b>But wait, there's more!</b>
             <p>
               <b>INTERVIEW PREPARATION</b> for final-stage excellence.
             </p>
             <p>
               Engaging interactive <b>SESSIONS</b> with your future IPM seniors{" "}
-            </p>
+            </p> 
             <p>
               Ready to take your preparation to the next level? Click the
               "Enroll Now" button and embark on your journey to success! 🚀
-            </p>
+            </p> */}
             <div class="flex mt-4">
               <div class="w-full px-3 flex items-center justify-center gap-x-3 py-1 border-2 border-[#EDEDED] rounded-lg text-center">
-                <p class=" text-gray-500 line-through">₹5000</p>
-                <p class="text-[25px] font-semibold">₹1899 </p>
+                <p class=" text-gray-500 line-through">{`₹${(plan?.price / 100)*0.4 + plan?.price / 100}`}</p>
+                <p class="text-[25px] font-semibold">{plan?.price / 100} </p>
                 <span className="font-normal text-sm">
                   Grab It Now at Our Launch Price!
                 </span>
@@ -150,17 +158,19 @@ export const BuyModal = ({ setBuyModalOpen }) => {
             </div>
             <button
               disabled={isDisabled}
-              className={`bg-[#bdf9a2] rounded-3xl py-3 w-full text-black mt-2 font-bold hover:scale-105 duration-300 transition-all ${
-                isDisabled ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`bg-[#bdf9a2] rounded-3xl py-3 w-full text-black mt-2 font-bold hover:scale-105 duration-300 transition-all ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               onClick={() => submitHandler()}
             >
               Enroll Now
             </button>
-            {/* <Link to={"https://rzp.io/l/ouoOV4xCE7"}
-                                    >
-                                        <p className={`bg-[#bdf9a2]  text-center rounded-3xl py-3 w-full text-black mt-2 font-bold hover:scale-105 duration-300 transition-all `}>Enroll Now</p>
-                                    </Link> */}
+            {/* <Link to={"https://rzp.io/l/ouoOV4xCE7"}>
+              <p
+                className={`bg-[#bdf9a2]  text-center rounded-3xl py-3 w-full text-black mt-2 font-bold hover:scale-105 duration-300 transition-all `}
+              >
+                Enroll Now
+              </p>
+            </Link> */}
           </div>
         </div>
       </div>
