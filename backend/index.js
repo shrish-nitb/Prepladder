@@ -13,8 +13,9 @@ const plansRouter = require("./router/plan");
 const testRouter = require("./router/test");
 const reportRouter = require("./router/report");
 const questionRouter = require("./router/question");
+const courseRouter = require("./router/course");
 const { connectDB } = require("./utils/database");
-
+const FileUpload=require("express-fileupload");
 const { firebaseTokenVerifier, userAuthLookup, roleAuthProvider } = require("./utils/middleware")
 
 async function main() {
@@ -22,7 +23,11 @@ async function main() {
   app.use(cookieParser());
   app.use(cors());
   app.use(bodyParser.json({ limit: '50mb' }));
-
+  app.use(FileUpload({
+      useTempFiles: true,
+      tempFileDir: '/tmp/'
+  })); 
+  
   app.use("/user", userRouter);
   app.use("/admin", firebaseTokenVerifier, userAuthLookup, roleAuthProvider('ADMIN'), adminRouter);
   app.use("/orders", ordersRouter);
@@ -30,6 +35,8 @@ async function main() {
   app.use("/test", testRouter);
   app.use("/report", reportRouter);
   app.use("/question", questionRouter)
+  app.use("/course", courseRouter)
+
 
   try {
     await connectDB();
